@@ -1,5 +1,6 @@
-from tkinter import *
 import platform
+
+from component_styles import *
 
 
 class ScrollFrame(Frame):
@@ -160,11 +161,12 @@ class AbstractCardKeys:
     ]
 
 
-class AbstractCard(Frame):
+class AbstractCard(StandardFrame):
     keys = AbstractCardKeys
 
-    def __init__(self, root, value_dict, *args, **kwargs):
-        super().__init__(root, *args, **kwargs)
+    def __init__(self, root, value_dict):
+        super().__init__(root)
+        # self.config(**self.style_args)
         self._value_dict = value_dict
 
     def key(self):
@@ -206,7 +208,14 @@ class User(dict):
             self[key] = value
 
 
-test_user_list = []
+test_user_list = list()
+test_user_list.append(User({
+        UserKeys.NAME: "Casey",
+        UserKeys.MAKE: "Toyota",
+        UserKeys.MODEL: "Avalon",
+        UserKeys.LICENSE_PLATE: "CZX0399",
+        UserKeys.EMAIL: "caseyray.lewis@gmail.com"
+    }))
 for x in range(10):
     user_index = str(x+1)
     user_dict = {
@@ -226,10 +235,8 @@ lbl_fg = 'white'
 
 
 class UserFrame(AbstractCard):
-    def __init__(self, root, user: User, on_name_func=None, on_delete_func=None, *args, **kwargs):
-        super().__init__(root, user, *args, **kwargs)
-        self.config(bg='#E1A2B8')
-
+    def __init__(self, root, user: User, on_name_func=None, on_delete_func=None):
+        super().__init__(root, user)
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
         self.grid_columnconfigure(2, weight=1)
@@ -239,25 +246,28 @@ class UserFrame(AbstractCard):
         self.on_delete_callback = on_delete_func
         self.on_name_callback = on_name_func
 
+        PADY = 15
+        PADX = 10
+
         # USER NAME
-        self._user_name_btn = Button(self, text=user[user.keys.NAME], command=lambda: self.__handle_btn_user_name(), bg=btn_bg, fg=btn_fg)
-        self._user_name_btn.grid(row=0, column=0, rowspan=2, sticky='nsew', padx=(10, 0), pady=5)
+        self._user_name_btn = StandardButton(self, text=user[user.keys.NAME], command=lambda: self.__handle_btn_user_name())
+        self._user_name_btn.grid(row=0, column=0, rowspan=2, sticky='nsew', padx=(PADX, 0), pady=PADY)
 
-        self._email_lbl = Label(self, text=user[user.keys.EMAIL], bg=lbl_bg, fg=lbl_fg)
-        self._email_lbl.grid(row=0, column=1, columnspan=3, sticky='nsew', padx=10, pady=(5, 0))
+        self._email_lbl = StandardLabel(self, text=user[user.keys.EMAIL])
+        self._email_lbl.grid(row=0, column=1, columnspan=3, sticky='nsew', padx=PADX, pady=(PADY, 0))
 
-        self._make_lbl = Label(self, text=user[user.keys.MAKE], bg=lbl_bg, fg=lbl_fg)
-        self._make_lbl.grid(row=1, column=1, sticky='nsew', padx=10, pady=5)
+        self._make_lbl = StandardLabel(self, text=user[user.keys.MAKE])
+        self._make_lbl.grid(row=1, column=1, sticky='nsew', padx=PADX, pady=PADY)
 
-        self._model_lbl = Label(self, text=user[user.keys.MODEL], bg=lbl_bg, fg=lbl_fg)
-        self._model_lbl.grid(row=1, column=2, sticky='nsew', pady=5)
+        self._model_lbl = StandardLabel(self, text=user[user.keys.MODEL])
+        self._model_lbl.grid(row=1, column=2, sticky='nsew', pady=PADY)
 
-        self._license_lbl = Label(self, text=user[user.keys.LICENSE_PLATE], bg=lbl_bg, fg=lbl_fg)
-        self._license_lbl.grid(row=1, column=3, sticky='nsew', padx=10, pady=5)
+        self._license_lbl = StandardLabel(self, text=user[user.keys.LICENSE_PLATE])
+        self._license_lbl.grid(row=1, column=3, sticky='nsew', padx=PADX, pady=PADY)
 
         # DELETE BTN
-        self._delete_btn = Button(self, text='[X]', command=lambda: self.__handle_btn_delete(), width=3, bg=delete_btn_bg)
-        self._delete_btn.grid(row=0, column=4, rowspan=2, sticky='nsew', padx=(0, 10), pady=5)
+        self._delete_btn = DeleteButton(self, command=lambda: self.__handle_btn_delete())
+        self._delete_btn.grid(row=0, column=4, rowspan=2, sticky='ns', padx=(0, PADX), pady=PADY)
 
     def __handle_btn_user_name(self):
         if self.on_name_callback is not None:
@@ -268,57 +278,28 @@ class UserFrame(AbstractCard):
             self.on_delete_callback(self.key())
 
 
-# class AccountFrame(Frame):
-#
-#     @property
-#     def name(self):
-#         return self._name
-#
-#     # @name.setter
-#     # def name(self, val):
-#     #     return
-#
-#     @property
-#     def description(self):
-#         return
-#
-#     @description.setter
-#     def description(self, val):
-#         self._lbl_desc['text'] = str(val)
-#
-#     def __init__(self, root, account: Account, on_delete_func=None, *args):
-#         super().__init__(root, *args, **style_frame_primary)
-#         self.grid_columnconfigure(0, weight=1)
-#         self.grid_columnconfigure(1, weight=0)
-#
-#         self.on_delete_callback = on_delete_func
-#
-#         self._name = account[Account.keys.NAME]
-#
-#         self._lbl_name = Label(self, text=account[Account.keys.NAME], height=2, **style_lbl)
-#         self._lbl_name.grid(row=0, column=0, **grid_lbl)
-#
-#         self._lbl_desc = Label(self, text=account[Account.keys.DESC], height=2, **style_lbl)
-#         self._lbl_desc.grid(row=1, column=0, **grid_lbl)
-#
-#         style_btn_delete = copy_dict(style_btn)
-#         style_btn_delete['width'] = 3
-#         self._btn_delete = Button(self, text="[x]", command=lambda: self.__handle_btn_delete(), **style_btn_delete)
-#         self._btn_delete.grid(row=0, column=1, rowspan=2, **grid_btn)
-#
-#     def __handle_btn_delete(self):
-#         if self.on_delete_callback is not None:
-#             self.on_delete_callback(self.name)
+def get_screen_size(root):
+    """
+    Get the screen height and width.
+    :param root: Main Tk Window
+    :return: screenwidth, screenheight
+    """
+    width = root.winfo_screenwidth()
+    height = root.winfo_screenheight()
+    return width, height
 
 
 if __name__ == '__main__':
     root = Tk()
+    root.config(bg=ROOT_BG)
+    # CONFIGURE ROOT COLUMNS
     root.grid_columnconfigure(0, weight=1)
     root.grid_columnconfigure(1, weight=5)
     root.grid_columnconfigure(2, weight=1)
     root.grid_rowconfigure(0, weight=1)
 
-    screen_width = root.winfo_screenwidth()
+    # GET SCREEN SIZES
+    screen_width, screen_height = get_screen_size(root)
 
     def on_window_configure(event):
         root_width = root.winfo_width()
@@ -326,24 +307,17 @@ if __name__ == '__main__':
             scrollframe.grid(column=0, columnspan=3)
         else:
             scrollframe.grid(column=1, columnspan=1)
-
     root.bind("<Configure>", lambda x: on_window_configure(x))
 
-    scrollframe = CardScrollFrame(root, bg='#00BC40')
+    # DEFINE SCROLLFRAME
+    scrollframe = CardScrollFrame(root, bg=ROOT_BG)
     scrollframe.grid(row=0, column=0, sticky='nsew')
 
     def delete_frame_by_key(frame_key):
         scrollframe.delete_frame_by_key(frame_key)
-        # scrollframe.output_dict_keys()
 
     def print_user_name(name):
         print(name)
-
-    # # ADD ALL ACCOUNTS IN TEST ACCOUNT LIST
-    # for account in test_account_list:
-    #     account_frame = AccountFrame(scrollframe.view_port, account)
-    #     account_frame.on_delete_callback = delete_frame_by_key
-    #     scrollframe.add_frame_by_key(account_frame.name, account_frame)
 
     # ADD ALL USERS IN TEST USER LIST
     for user in test_user_list:

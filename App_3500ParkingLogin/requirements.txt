@@ -1,0 +1,3 @@
+selenium
+pyyaml
+-r ../Libs/OSLib/requirements-OSLIB.txt
