@@ -34,7 +34,7 @@ class TestRegister2Park(unittest.TestCase):
                 model='Avalon',
                 license_plate='CZX0399',
                 email='caseyray.lewis@gmail.com',
-                apartment_number='1223',
+                apartment_number='621',
             )
         except Exception as e:
             self.fail()
