@@ -1,5 +1,6 @@
 import os
 import shutil
+import stat
 
 
 # DIRECTORY FUNCTIONS
@@ -8,6 +9,8 @@ def dir_create(path):
     if not os.path.isdir(path):
         os.mkdir(path, mode=777)
         os.chmod(path, 0o777)
+        # print(stat.S_IRUSR, stat.S_IWUSR, stat.S_IXUSR)
+        # os.chmod(path, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
 
 
 def dir_remove(path):

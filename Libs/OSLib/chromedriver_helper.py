@@ -1,18 +1,29 @@
-import os
-import requests
-import zipfile
-import shutil
-from subprocess import Popen, PIPE, STDOUT
 import platform
+import time
+import zipfile
+from subprocess import PIPE, Popen, STDOUT
+
+import requests
+
 from Libs.OSLib.os_helper import *
-import signal
+
+# OS DEPENDENT VARIABLES
+running_os = platform.system()
+if running_os == 'Linux':
+    CHROMEDRIVER_ZIP_NAME = 'chromedriver_linux64.zip'
+    CHROMEDRIVER_EXE_NAME = 'chromedriver'
+elif running_os == 'Windows':
+    CHROMEDRIVER_ZIP_NAME = 'chromedriver_win32.zip'
+    CHROMEDRIVER_EXE_NAME = 'chromedriver.exe'
+else:
+    raise Exception("OS not supported")
 
 
 def __get_chrome_version_linux():
     chrome_version = None
     cmd = 'google-chrome --version'
     try:
-        p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT)#, close_fds=True)
+        p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT)
         output = p.stdout.read().rstrip().decode()
         chrome_version = output.strip('Google Chrome')
         p.terminate()
@@ -45,6 +56,7 @@ def __get_chrome_version_windows():
             full_dir_item_path = target_dir + r"\{}".format(dir_item.name)
             # THE VERSION WILL HAVE IT'S OWN DIRECTORY, SO CHECK THEM ALL
             if os.path.isdir(full_dir_item_path):
+                walk_return.close()
                 return dir_name
 
 
@@ -58,16 +70,10 @@ def get_chrome_version():
 def download_chrome_driver(dir):
     # TEMP DIRECTORY STARTS WITH DESKTOP PATH
     temp_dir = os.path.join(dir, 'tempdownload')
-    # CREATE TEMP DIR AND CHANGE TO IT
-    if not os.path.exists(temp_dir):
-        dir_create(temp_dir)
-        # os.umask(0)
-        # os.mkdir(temp_dir, mode=777)
-        # os.chmod(temp_dir, 777)
-    # os.chdir(temp_dir)
+    dir_create(temp_dir)
 
-    chrome_version = get_chrome_version()
     # SET UP CHROME VERSION WITH JUST MAJOR, MINOR, AND BUILD VERSION
+    chrome_version = get_chrome_version()
     major, minor, build_version, remove_version = chrome_version.split('.')
 
     # CHROME DRIVER DOWNLOAD LINK IS THE CHROME VERSION MINUS THE LAST PART OF THE VERSION NUMBER
@@ -78,26 +84,16 @@ def download_chrome_driver(dir):
     r = requests.get(chrome_driver_latest_release_link, allow_redirects=True)
     latest_version = r.content.decode('ascii')
 
-    running_os = platform.system()
-    if running_os == 'Linux':
-        zip_file_name = 'chromedriver_linux64.zip'
-        chrome_driver_exe_name = 'chromedriver'
-    elif running_os == 'Windows':
-        zip_file_name = 'chromedriver_win32.zip'
-        chrome_driver_exe_name = 'chromedriver.exe'
-    else:
-        raise Exception("OS not supported")
-
     # FINALLY GET THE ACTUALLY DOWNLOAD LINK
     chrome_driver_zip_download_link = 'https://chromedriver.storage.googleapis.com/{}/{}'.format(
-        latest_version, zip_file_name)
+        latest_version, CHROMEDRIVER_ZIP_NAME)
 
     # DOWNLOAD ZIP FILE TO TEMP DIRECTORY
     r = requests.get(chrome_driver_zip_download_link, allow_redirects=True)
-    # zip_file_name = 'chromedriver_win32.zip'
-    zip_location = os.path.join(temp_dir, zip_file_name) #r"{}\{}".format(temp_dir, zip_file_name)
-    write_file = open(zip_location, 'wb')
-    write_file.write(r.content)
+    zip_location = os.path.join(temp_dir, CHROMEDRIVER_ZIP_NAME)
+    with open(zip_location, 'wb') as write_file:
+        write_file.write(r.content)
+        write_file.close()
 
     # EXTRACT ZIP FILE
     with zipfile.ZipFile(zip_location, 'r') as zip_ref:
@@ -105,21 +101,20 @@ def download_chrome_driver(dir):
         zip_ref.close()
 
     # MOVE CHROMEDRIVER TO CORRECT APP DIRECTORY
-    chromedriver_exe_location = os.path.join(temp_dir, chrome_driver_exe_name)
-    app_chromedriver_exe_location = os.path.join(dir, chrome_driver_exe_name)
+    chromedriver_exe_location = os.path.join(temp_dir, CHROMEDRIVER_EXE_NAME)
+    app_chromedriver_exe_location = os.path.join(dir, CHROMEDRIVER_EXE_NAME)
     # IF CHROMEDRIVER EXISTS IN APP LOCATION, IT MUST BE DELETED BEFORE BEING MOVED OVER
     if os.path.exists(app_chromedriver_exe_location):
         os.remove(app_chromedriver_exe_location)
-        print("removed current chromedriver")
     # MOVE CHROMEDRIVER TO APP LOCATION
     os.rename(chromedriver_exe_location, app_chromedriver_exe_location)
-    os.chmod(app_chromedriver_exe_location, 0o771)
+    os.chmod(app_chromedriver_exe_location, 0o777)
 
-    # CHANGE DIR BACK TO APP DIR SO THAT CHROMEDRIVER WILL BE USED PROPERLY
-    os.chdir(dir)
     # DELETE ALL FROM TEMP DIR
     delete_all_from_dir(temp_dir)
+    time.sleep(.1)
     dir_remove(temp_dir)
+    time.sleep(.1)
 
 
 def delete_all_from_dir(dir):
