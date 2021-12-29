@@ -1,34 +1,62 @@
 from selenium import webdriver
 import os
 from selenium.common.exceptions import WebDriverException
-from Libs.OSLib.chromedriver_helper import *
+from Libs.OSLib.chromedriver_helper import download_chrome_driver, CHROMEDRIVER_EXE_NAME
+from Libs.OSLib.os_helper import *
 
 
-parking_url = "https://www.register2park.com/register"
-
-apt_desc = "3500 Westlake"  # Don't change this, it is an important input for the web page
 apt_number = "1223"
 email_address = 'caseyray.lewis@gmail.com'
 
 
-def register_2_park(chromedriver_path=None, make=None, model=None, license_plate=None, email=None):
-    """
-    Attempt to register to park in the apartment complex.
-    :param make:
-    :param model:
-    :param license_plate:
-    :param email:
-    :return: True if successful, False if unsuccessful
-    """
-    # CHECK OS FOR CHROMEDRIVER FILENAME, THEN DOWNLOAD CHROMEDRIVER IF NOT THERE
-    running_os = platform.system()
-    if running_os == 'Linux':
-        chromedriver_exe_name = 'chromedriver'
-    elif running_os == 'Windows':
-        chromedriver_exe_name = 'chromedriver.exe'
-    else:
-        raise Exception("OS not supported: {}".format(running_os))
-    exe_path = os.path.join(chromedriver_path, chromedriver_exe_name)
+class RegisterKeys:
+    MAKE = 'make'
+    MODEL = 'model'
+    LICENSE_PLATE = 'license_plate'
+    EMAIL = 'email',
+    CHROMEDRIVER_PATH = 'chromedriver_path'
+    APARTMENT_NUMBER = 'apartment_number'
+
+    all_keys = [
+        MAKE,
+        MODEL,
+        LICENSE_PLATE,
+        CHROMEDRIVER_PATH,
+    ]
+
+
+class RegisterDefaults:
+    MAKE = 'DEFAULT_MAKE'
+    MODEL = 'DEFAULT_MODEL'
+    LICENSE_PLATE = 'DEFAULT_LICENSE'
+    EMAIL = 'DEFAULT_EMAIL'
+    CHROMEDRIVER_PATH = 'DEFAULT_CHROMEDRIVER_PATH'
+    APARTMENT_NUMBER = 'DEFAULT_APARTMENT_NUMBER'
+
+
+class RegisterInfo:
+    keys = RegisterKeys()
+
+    def __init__(self, **kwargs):
+        self.make = kwargs.get(self.keys.MAKE, RegisterDefaults.MAKE)
+        self.model = kwargs.get(self.keys.MODEL, RegisterDefaults.MODEL)
+        self.license_plate = kwargs.get(self.keys.LICENSE_PLATE, RegisterDefaults.LICENSE_PLATE)
+        self.email = kwargs.get(self.keys.EMAIL, RegisterDefaults.EMAIL)
+        self.chromedriver_path = kwargs.get(self.keys.CHROMEDRIVER_PATH, RegisterDefaults.CHROMEDRIVER_PATH)
+        self.apartment_number = kwargs.get(self.keys.APARTMENT_NUMBER, RegisterDefaults.APARTMENT_NUMBER)
+
+
+def register_2_park(
+        chromedriver_path=None,
+        make=None,
+        model=None,
+        license_plate=None,
+        email=None,
+        apartment_number=None
+):
+
+    # DOWNLOAD CHROMEDRIVER IF NEED TO
+    exe_path = os.path.join(chromedriver_path, CHROMEDRIVER_EXE_NAME)
     if not file_exists(exe_path):
         download_chrome_driver(chromedriver_path)
 
@@ -37,11 +65,11 @@ def register_2_park(chromedriver_path=None, make=None, model=None, license_plate
 
     # PERFORM UPGRADE
     driver = webdriver.Chrome(exe_path)
-    driver.get(parking_url)
+    driver.get("https://www.register2park.com/register")
 
     # FIRST PAGE
     property_name = driver.find_element_by_id("propertyName")
-    property_name.send_keys(apt_desc)
+    property_name.send_keys("3500 Westlake")
     property_name.submit()
     # SECOND PAGE
     confirm_property = driver.find_element_by_id("confirmProperty")
@@ -59,7 +87,7 @@ def register_2_park(chromedriver_path=None, make=None, model=None, license_plate
     driver.implicitly_wait(10)
     vehicle_apt = driver.find_element_by_id('vehicleApt')
     vehicle_apt.click()
-    vehicle_apt.send_keys(apt_number)
+    vehicle_apt.send_keys(apartment_number)
     vehicle_make = driver.find_element_by_id('vehicleMake')
     vehicle_make.click()
     vehicle_make.send_keys(make)
@@ -90,31 +118,3 @@ def register_2_park(chromedriver_path=None, make=None, model=None, license_plate
 if __name__ == '__main__':
     from App_3500ParkingLogin.ParkingLoginApp import *
     yes_or_no = 'n'
-
-    register_kwargs = {
-        # "name": "Natalie",
-        "make": "Volkswagen",
-        "model": "Jetta",
-        "license": "MJH3932",
-        "email": "caseyray.lewis@gmail.com"
-    }
-    chromedriver_path = PATH_CHROMEDRIVER
-
-    register_2_park(**register_kwargs, chromedriver_path=chromedriver_path)
-
-    # while yes_or_no == 'n':
-    #     make = input("Make: ")
-    #     model = input("Model: ")
-    #     license_number = input("License Plate #: ")
-    #     email = input("Email Address: ")
-    #
-    #     yes_or_no = input("\n"
-    #                       "Make:            {}\n"
-    #                       "Model:           {}\n"
-    #                       "License Plate #: {}\n"
-    #                       "Email Address:   {}\n"
-    #                       "\n"
-    #                       "If this is correct please enter 'y' or 'n' (Yes or No): ".format(make, model, license_number, email))
-    #
-    #     if yes_or_no == 'y':
-    #         register_2_park(make, model, license_number, email)

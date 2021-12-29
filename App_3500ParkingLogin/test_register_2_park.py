@@ -28,9 +28,39 @@ class TestRegister2Park(unittest.TestCase):
 
     def test_register_2_park(self):
         try:
-            register_2_park(chromedriver_path=self.chromedriver_dir, **user)
+            register_2_park(
+                chromedriver_path=self.chromedriver_dir,
+                make='Toyota',
+                model='Avalon',
+                license_plate='CZX0399',
+                email='caseyray.lewis@gmail.com',
+                apartment_number='1223',
+            )
         except Exception as e:
             self.fail()
+
+    def test_RegisterInfo(self):
+        test_reg_info = RegisterInfo()
+
+        # TEST DEFAULTS
+        self.assertEqual(test_reg_info.make, RegisterDefaults.MAKE)
+        self.assertEqual(test_reg_info.model, RegisterDefaults.MODEL)
+        self.assertEqual(test_reg_info.license_plate, RegisterDefaults.LICENSE_PLATE)
+        self.assertEqual(test_reg_info.email, RegisterDefaults.EMAIL)
+        self.assertEqual(test_reg_info.chromedriver_path, RegisterDefaults.CHROMEDRIVER_PATH)
+
+        # TEST UPDATED VALUES
+        test_reg_info.make = 'new_make'
+        test_reg_info.model = 'new_model'
+        test_reg_info.license_plate = 'new_license'
+        test_reg_info.email = 'new_email'
+        test_reg_info.chromedriver_path = 'new_chromedriver'
+
+        self.assertEqual(test_reg_info.make, 'new_make')
+        self.assertEqual(test_reg_info.model, 'new_model')
+        self.assertEqual(test_reg_info.license_plate, 'new_license')
+        self.assertEqual(test_reg_info.email, 'new_email')
+        self.assertEqual(test_reg_info.chromedriver_path, 'new_chromedriver')
 
 
 if __name__ == '__main__':
