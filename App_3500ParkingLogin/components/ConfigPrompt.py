@@ -1,4 +1,4 @@
-from Libs.GuiLib.gui_extras import *
+from Libs.GuiLib.gui_standards import *
 
 
 class ConfigPrompt(StandardModal):

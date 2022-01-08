@@ -17,11 +17,11 @@ class UserListSubFrame(StandardFrame):
 
         # TITLE
         self.user_list_frame_title = TitleLabel(self, text="User List")
-        self.user_list_frame_title.grid(row=0, column=0, **grid_lbl)
+        self.user_list_frame_title.grid(row=0, column=0, **TitleLabel.grid_args)
 
         # SCROLL FRAME
-        self.user_list_scroll_frame = CardScrollFrame(self, hide_scroll_bar=True, **style_frame_primary)
-        self.user_list_scroll_frame.grid(row=1, column=0, **grid_frame_primary)
+        self.user_list_scroll_frame = CardScrollFramePlus(self, hide_scroll_bar=True)
+        self.user_list_scroll_frame.grid(row=1, column=0, sticky=grid_style.sticky.all)
         self.user_list_scroll_frame.view_port.grid_columnconfigure(0, weight=1)
         self.user_list_scroll_frame.view_port.grid_columnconfigure(1, weight=0)
 

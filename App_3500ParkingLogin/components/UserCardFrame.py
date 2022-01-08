@@ -1,8 +1,9 @@
 from App_3500ParkingLogin.data_types.users import *
-from Libs.GuiLib.gui_extras import *
+from Libs.GuiLib.gui_abstracts import *
 
 
 class UserCardFrame(AbstractCard):
+
     def __init__(self, root, user: User, on_name_func=None, on_delete_func=None):
         super().__init__(root, user)
         self.grid_columnconfigure(0, weight=1)
@@ -44,3 +45,6 @@ class UserCardFrame(AbstractCard):
     def __handle_btn_delete(self):
         if self.on_delete_callback is not None:
             self.on_delete_callback(self.key())
+
+    def update_from_object(self, object):
+        pass

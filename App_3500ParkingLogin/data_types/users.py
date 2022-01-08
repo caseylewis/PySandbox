@@ -1,7 +1,7 @@
 
 
 class UserKeys:
-    NAME = 'name'
+    NAME = 'Name'
     MAKE = 'make'
     MODEL = 'model'
     LICENSE_PLATE = 'license_plate'

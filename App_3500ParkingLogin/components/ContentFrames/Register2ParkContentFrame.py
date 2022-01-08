@@ -1,13 +1,13 @@
 from abc import ABC
 
-from Libs.GuiLib.gui_extras import *
+from Libs.GuiLib.gui_majors import *
 from App_3500ParkingLogin.components.SubFrames.UserListSubFrame import *
 from App_3500ParkingLogin.components.SubFrames.Register2ParkSubFrame import *
 
 
 class Register2ParkContentFrame(ContentFrame, ABC):
     def __init__(self, root, user_data_list, config_dict, on_delete_user=None, on_select_user=None, on_new_session_func=None):
-        super().__init__(root, "Register2Park", **StandardFrame.style_args)
+        super().__init__(root, "Register2Park")
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
         self.grid_columnconfigure(2, weight=1)
@@ -38,6 +38,7 @@ class Register2ParkContentFrame(ContentFrame, ABC):
 
 
 if __name__ == '__main__':
+    from Libs.GuiLib.gui_functions import *
     root = Tk()
     root.config(bg=ROOT_BG)
     # CONFIGURE ROOT COLUMNS

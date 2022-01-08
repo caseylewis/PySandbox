@@ -1,14 +1,16 @@
-from Libs.GuiLib.gui_extras import *
-from App_3500ParkingLogin.components.ContentFrames.Register2ParkContentFrame import *
-from App_3500ParkingLogin.components.ContentFrames.AddUserContentFrame import *
-from Libs.DataLib.json_helper import *
-from Libs.OSLib.os_helper import *
-from App_3500ParkingLogin.components.ConfigPrompt import *
-import yaml
-from App_3500ParkingLogin.register_2_park import *
-from App_3500ParkingLogin.components.ChromedriverPrompt import *
-from Libs.OSLib.chromedriver_helper import *
 from tkinter import messagebox
+
+import yaml
+
+from App_3500ParkingLogin.components.ChromedriverPrompt import *
+from App_3500ParkingLogin.components.ConfigPrompt import *
+from App_3500ParkingLogin.components.ContentFrames.AddUserContentFrame import *
+from App_3500ParkingLogin.components.ContentFrames.Register2ParkContentFrame import *
+from App_3500ParkingLogin.register_2_park import *
+from Libs.DataLib.json_helper import *
+from Libs.GuiLib.gui_majors import *
+from Libs.GuiLib.gui_functions import *
+from Libs.OSLib.chromedriver_helper import *
 
 
 class ParkingLoginApp(NavigableTkFrame):
@@ -33,21 +35,24 @@ class ParkingLoginApp(NavigableTkFrame):
         self.set_nav_btn_style(**{
             'bg': 'green',
             'fg': 'white',
-            'font': (FONT_NAME_STANDARD, h1),
+            'font': (style.font.style.std, style.font.size.h1),
         })
         self.master.protocol('WM_DELETE_WINDOW', lambda: self.__handle_window_close())
 
         # DATA OBJECTS
         # self._user_list = test_user_list
         self._user_list = []
-        self._config_data = {"apartment_number": "1223", "apartment_description": "3500 Westlake"}
+        self._config_data = {"apartment_number": "621", "apartment_description": "3500 Westlake"}
         # self._config_data = {}
 
         # IMPORT DATA - MUST BE BEFORE SETTING UP FRAMES
         self.__import_data()
 
         # CONTENT FRAMES
-        self.register_2_park_content_frame = Register2ParkContentFrame(self.content_frame, self._user_list, self._config_data, on_select_user=self.insert_user, on_delete_user=self.delete_user, on_new_session_func=self.register_user)
+        self.register_2_park_content_frame = Register2ParkContentFrame(self.content_frame, self._user_list, self._config_data,
+                                                                       on_select_user=self.insert_user,
+                                                                       on_delete_user=self.delete_user,
+                                                                       on_new_session_func=self.register_user)
         self.add_user_content_frame = AddUserContentFrame(self.content_frame, on_add_user=self.add_user)
 
         # ADD THE CONTENT FRAMES IN THE CORRECT ORDER

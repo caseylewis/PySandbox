@@ -1,12 +1,12 @@
 from abc import ABC
 
-from Libs.GuiLib.gui_extras import *
+from Libs.GuiLib.gui_majors import *
 from App_3500ParkingLogin.components.SubFrames.AddUserSubFrame import *
 
 
 class AddUserContentFrame(ContentFrame, ABC):
     def __init__(self, root, on_add_user=None):
-        super().__init__(root, "Add User", **StandardFrame.style_args)
+        super().__init__(root, "Add User")
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
         self.grid_columnconfigure(2, weight=1)
@@ -23,6 +23,7 @@ class AddUserContentFrame(ContentFrame, ABC):
 
 
 if __name__ == '__main__':
+    from Libs.GuiLib.gui_functions import *
     root = Tk()
     root.config(bg=ROOT_BG)
     # CONFIGURE ROOT COLUMNS

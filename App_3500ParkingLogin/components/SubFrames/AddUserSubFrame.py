@@ -1,4 +1,4 @@
-from Libs.GuiLib.gui_extras import *
+from Libs.GuiLib.gui_standards import *
 from App_3500ParkingLogin.data_types.users import *
 
 
@@ -16,39 +16,39 @@ class AddUserSubFrame(StandardFrame):
 
         # LABELS COLUMN
         self.register_user_name_lbl = StandardLabel(self, text="Name")
-        self.register_user_name_lbl.grid(row=1, column=0, **grid_lbl)
+        self.register_user_name_lbl.grid(row=1, column=0, **StandardLabel.grid_args)
 
         self.register_user_make_lbl = StandardLabel(self, text="Make")
-        self.register_user_make_lbl.grid(row=2, column=0, **grid_lbl)
+        self.register_user_make_lbl.grid(row=2, column=0, **StandardLabel.grid_args)
 
         self.register_user_model_lbl = StandardLabel(self, text="Model")
-        self.register_user_model_lbl.grid(row=3, column=0, **grid_lbl)
+        self.register_user_model_lbl.grid(row=3, column=0, **StandardLabel.grid_args)
 
         self.register_user_license_lbl = StandardLabel(self, text="License Plate")
-        self.register_user_license_lbl.grid(row=4, column=0, **grid_lbl)
+        self.register_user_license_lbl.grid(row=4, column=0, **StandardLabel.grid_args)
 
         self.register_user_email_lbl = StandardLabel(self, text="Email")
-        self.register_user_email_lbl.grid(row=5, column=0, **grid_lbl)
+        self.register_user_email_lbl.grid(row=5, column=0, **StandardLabel.grid_args)
 
         # ENTRIES COLUMN
         self.register_user_name_entry = StandardEntry(self)
-        self.register_user_name_entry.grid(row=1, column=1, **grid_entry)
+        self.register_user_name_entry.grid(row=1, column=1, **StandardEntry.grid_args)
 
         self.register_user_make_entry = StandardEntry(self)
-        self.register_user_make_entry.grid(row=2, column=1, **grid_entry)
+        self.register_user_make_entry.grid(row=2, column=1, **StandardEntry.grid_args)
 
         self.register_user_model_entry = StandardEntry(self)
-        self.register_user_model_entry.grid(row=3, column=1, **grid_entry)
+        self.register_user_model_entry.grid(row=3, column=1, **StandardEntry.grid_args)
 
         self.register_user_license_entry = StandardEntry(self)
-        self.register_user_license_entry.grid(row=4, column=1, **grid_entry)
+        self.register_user_license_entry.grid(row=4, column=1, **StandardEntry.grid_args)
 
         self.register_user_email_entry = StandardEntry(self)
-        self.register_user_email_entry.grid(row=5, column=1, **grid_entry)
+        self.register_user_email_entry.grid(row=5, column=1, **StandardEntry.grid_args)
 
         # CREATE USER BTN
         self.register_user_create_user_btn = StandardButton(self, text="Create User", command=lambda: self.__handle_create_user_btn())
-        self.register_user_create_user_btn.grid(row=6, column=1, **grid_btn)
+        self.register_user_create_user_btn.grid(row=6, column=1, **StandardButton.grid_args)
 
     def get_user_from_entries(self):
         # GET VALUES FROM ENTRIES
@@ -86,6 +86,7 @@ class AddUserSubFrame(StandardFrame):
 
 
 if __name__ == '__main__':
+    from Libs.GuiLib.gui_functions import *
     root = Tk()
     root.config(bg=ROOT_BG)
     # CONFIGURE ROOT COLUMNS
