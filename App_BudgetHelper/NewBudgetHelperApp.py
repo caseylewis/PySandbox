@@ -1,5 +1,7 @@
-from App_BudgetHelper.components.Accounts.AccountFrame import *
+import yaml
+
 from App_BudgetHelper.components.AccountSummary.AccountSummaryFrame import *
+from App_BudgetHelper.components.Accounts.AccountFrame import *
 from App_BudgetHelper.components.ExpenseSummary.ExpenseSummaryFrame import *
 from App_BudgetHelper.components.Expenses.ExpenseFrame import *
 from App_BudgetHelper.components.PaymentOverview.PaymentOverviewFrame import *
@@ -7,7 +9,6 @@ from Libs.DataLib.json_helper import *
 from Libs.GuiLib.gui_majors import *
 from Libs.GuiLib.gui_styles import *
 from Libs.OSLib.os_helper import *
-import yaml
 
 
 class BudgetHelper(NavigableTkFrame):
